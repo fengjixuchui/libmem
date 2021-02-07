@@ -12,20 +12,20 @@
 #define NAKEDFN void __attribute__((naked))
 #endif
 
-#if   MEM_ARCH == MEM_x86_32
+#if   MEM_ARCH == _MEM_ARCH_x86_32
 #define EXAMPLE_HOOK 1
-#elif MEM_ARCH == MEM_x86_64
+#elif MEM_ARCH == _MEM_ARCH_x86_64
 #define EXAMPLE_HOOK 0
 #endif
 
 #define tprint(...)  print(MEM_STR("    ") __VA_ARGS__)
 #define separator()  print(MEM_STR("--------------------\n"))
 #define tseparator() tprint(MEM_STR("--------------------\n"))
-#define arch_to_str(arch) (arch == x86_32 ? "x86_32" : arch == x86_64 ? "x86_64" : "Unknown")
+#define arch_to_str(arch) (arch == MEM_ARCH_x86_32 ? "x86_32" : arch == MEM_ARCH_x86_64 ? "x86_64" : "Unknown")
 #define print_logo() print(MEM_STR("\n\
 /*\n\
  *  ----------------------------------\n\
- * |         libmem - by rdbo         |\n\
+ * |        libmem++ - by rdbo        |\n\
  * |  https://github.com/rdbo/libmem  |\n\
  *  ----------------------------------\n\
  */\n\
@@ -187,7 +187,7 @@ int main()
 	tprint(MEM_STR("Hook   Function: %p\n"), (void*)hook_function);
 	mem_byte_t* p_target_function = (mem_byte_t*)target_function;
 	if (p_target_function[0] == 0xE9) p_target_function = &p_target_function[(*(mem_intptr_t*)(&p_target_function[1])) + 5];
-	HookReturn = mem::in::detour_trampoline((mem_voidptr_t)p_target_function, (mem_voidptr_t)hook_function, mem::in::detour_size(x86_JMP32), x86_JMP32, NULL);
+	HookReturn = mem::in::detour_trampoline((mem_voidptr_t)p_target_function, (mem_voidptr_t)hook_function, mem::in::detour_size(MEM_ASM_x86_JMP32), MEM_ASM_x86_JMP32, NULL);
 	target_function((void*)failure_function);
 	tseparator();
 #	endif
